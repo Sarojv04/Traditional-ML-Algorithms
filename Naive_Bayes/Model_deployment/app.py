@@ -8,8 +8,13 @@ from nltk.stem.porter import PorterStemmer
 ps = PorterStemmer()
 
 
-tfid1 = pickle.load(open('vectorizer.pk1','rb'))
-model = pickle.load(open('model.pk1','rb'))
+# tfid1 = pickle.load(open('vectorizer.pk1','rb'))
+# model = pickle.load(open('model.pk1','rb'))
+
+import os
+BASE_DIR = os.path.dirname(__file__)
+tfid1 = pickle.load(open(os.path.join(BASE_DIR, 'vectorizer.pk1'), 'rb'))
+model = pickle.load(open(os.path.join(BASE_DIR, 'model.pk1'), 'rb'))
 
 st.title("SMS/Email detection Application")
 
