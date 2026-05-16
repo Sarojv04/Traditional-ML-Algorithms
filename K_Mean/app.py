@@ -3,17 +3,15 @@ from PIL import Image
 import numpy as np
 import pickle
 import requests
+import os
 
 # Load API key from secrets file
 DEEPSEEK_API_KEY = st.secrets["DEEPSEEK_API_KEY"]
 
 # Load the saved KMeans model
-# with open("model.pkl", "rb") as f:
-#     kmeans = pickle.load(f)
-
-import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(BASE_DIR, "model.pkl"), "rb") as f:
+    kmeans = pickle.load(f)
 
 st.title("Interior Design Color Suggester")
 st.write("Upload a room image and get decoration suggestions!")
@@ -29,7 +27,7 @@ if uploaded_file:
     kmeans.fit(img_array)
     colors = kmeans.cluster_centers_.astype(int)
 
-    # Showing dominant colors
+    # Show dominant colors
     st.subheader("Dominant Colors Found")
     hex_colors = []
     cols = st.columns(len(colors))
@@ -41,7 +39,7 @@ if uploaded_file:
             unsafe_allow_html=True
         )
 
-    # We will get automate suggestions when image is uploaded
+    # Automatically get suggestions when image is uploaded
     st.subheader("Decoration Suggestions")
     with st.spinner("Getting suggestions..."):
         prompt = f"My room has these dominant colors: {', '.join(hex_colors)}. Suggest decoration ideas, furniture style, and wall paint color."
@@ -52,10 +50,5 @@ if uploaded_file:
             json={"model": "llama-3.1-8b-instant", "messages": [{"role": "user", "content": prompt}]}
         )
 
-        response_data = response.json()
-
-        # This will show us what DeepSeek actually returned
-        #st.write(response_data)
         result = response.json()["choices"][0]["message"]["content"]
         st.write(result)
-        
